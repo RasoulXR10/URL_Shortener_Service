@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from .utils import code_generator, create_shortener
+from django.conf import settings
+
+# SHORTENER_MAX = settings.SHORTENER_MAX, if you want to use this app in other projects you should use getattr
+SHORTENER_MAX = getattr(settings, "SHORTENER_MAX", 15)
 
 
 class URLAppManager(models.Manager):
@@ -10,9 +14,11 @@ class URLAppManager(models.Manager):
         qs = qs_main.filter(active=True)
         return qs
 
-    def refresh_shortener(self):
+    def refresh_shortener(self, items=100):
         qs = URLAppShortener.objects.filter(
             id__gte=1)  # this is literly every items
+        if items is not None and isinstance(items, int):
+            qs = qs.order_by('-id')[:items]
         new_codes = 0
         for q in qs:
             q.shortener = create_shortener(q)
@@ -24,7 +30,8 @@ class URLAppManager(models.Manager):
 
 class URLAppShortener(models.Model):
     url = models.CharField(max_length=250, )
-    shortener = models.CharField(max_length=15, unique=True, blank=True)
+    shortener = models.CharField(
+        max_length=SHORTENER_MAX, unique=True, blank=True)
     # everytime the model is saved
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(
