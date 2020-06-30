@@ -25,7 +25,7 @@ SECRET_KEY = '_mvq@wnjw56oowsomv0io5n%rn&-05)yl$xeqckgdn)50k2!65'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.shortener.com', 'shortener.com', 'localhost', ]
 
 
 # Application definition
@@ -37,10 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # third-part
+    'django_hosts',
+
+    # custom-app
     'urlapp.apps.UrlappConfig',
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,9 +54,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'urlshortener.urls'
+ROOT_HOSTCONF = 'urlshortener.hosts'
+DEFAULT_HOST = 'www'
+DEFAULT_REDIRECT_URL = "http://www.shortener.com:8000"
 
 TEMPLATES = [
     {
@@ -120,5 +130,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-SHORTENER_MAX = 10
-SHORTENER_MIN = 5
+SHORTENER_MAX = 15
+SHORTENER_MIN = 6
