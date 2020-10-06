@@ -9,7 +9,11 @@
 </head>
 
 <body>
-    <h1>Url shortener {{ obj.url }}</h1>
+    <h1>Hi Rasoul</h1>
+    <form method='POST' action='.'> {% csrf_token %}
+        <input name='url' type='text' placeholder='Write URL for shorten'/>
+        <input type='submit' value='shorten'/>
+    </form>
 </body>
 
 </html>

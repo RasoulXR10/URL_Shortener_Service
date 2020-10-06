@@ -5,36 +5,27 @@ from django.views import View
 from .models import URLAppShortener
 
 
-def homeFBV(request, shortener=None, *args, **kwargs):  # Function Based View --> FBV
-    obj = get_object_or_404(URLAppShortener, shortener=shortener)
-    context = {
-        'obj': obj,
-    }
-    return HttpResponseRedirect(obj.url)
+def home_view_fbv(request, *args, **kargs):
+    if request.method == "POST":
+        print(request.POST)
+
+    return render(request, "urlapp/home.html", {})
 
 
-class homeCBV(View):  # Class Based View --> CBV
-    def get(self, request, shortener=None, *args, **kwargs):
-        obj = get_object_or_404(URLAppShortener, shortener=shortener)
-        return HttpResponseRedirect(obj.url)
+class HomeView(View):
+    def get(self, request, *args, **kargs):
+        return render(request, "urlapp/home.html", {})
+
+    def post(self, request, *args, **kargs):
+        print(request.POST)
+        return render(request, "urlapp/home.html", {})
+
+
+class homeCBV(View):
+    def get(self, request, shortcode=None, *args, **kwargs):
+        obj = get_object_or_404(URLAppShortener, shortener=shortcode)
+        return HttpResponse("hello again {sc}").format(sc=shortcode)
 
     # in class based views we should explicitly write the method you want to handle
-    def post(self, request, *args, **kwargs):
-        return HttpResponse()
-
-
-'''
-    obj = URLAppShortener.objects.get(shortener=shortener)
-
-    try:
-        obj = URLAppShortener.objects.get(shortener=shortener)
-    except:
-        obj = URLAppShortener.objects.all().first()
-
-    obj_url = None
-    qs = URLAppShortener.objects.filter(shortener__iexact=shortener.upper())
-    if qs.exists() and qs.count() == 1:
-        obj = qs.first()
-        obj_url = obj.url
-
-'''
+    # def post(self, request, *args, **kwargs):
+    #     return HttpResponse()
